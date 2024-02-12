@@ -1,14 +1,12 @@
 package orci.or.tz.overtime.utilities;
 
+import orci.or.tz.overtime.dto.claims.ClaimResponseDto;
 import orci.or.tz.overtime.dto.department.DepartmentResponseDto;
 import orci.or.tz.overtime.dto.directorate.DirectorateResponseDto;
 import orci.or.tz.overtime.dto.executive.ExecutiveResponseDto;
 import orci.or.tz.overtime.dto.section.SectionResponseDto;
 import orci.or.tz.overtime.dto.user.UserResponseDto;
-import orci.or.tz.overtime.models.ApplicationUser;
-import orci.or.tz.overtime.models.Department;
-import orci.or.tz.overtime.models.Directorate;
-import orci.or.tz.overtime.models.Section;
+import orci.or.tz.overtime.models.*;
 import orci.or.tz.overtime.services.DepartmentService;
 import orci.or.tz.overtime.services.DirectorateService;
 import orci.or.tz.overtime.services.SectionService;
@@ -33,6 +31,13 @@ public class Commons {
     @Autowired
     private SectionService sectionService;
 
+
+    public ClaimResponseDto GenerateClaim(OverTimeClaim c){
+        ModelMapper modelMapper = mapper.getModelMapper();
+        ClaimResponseDto claim = modelMapper.map(c,ClaimResponseDto.class);
+        return claim;
+
+    }
 
     public DirectorateResponseDto GenerateDirectorate(Directorate s) {
         ModelMapper modelMapper = mapper.getModelMapper();
