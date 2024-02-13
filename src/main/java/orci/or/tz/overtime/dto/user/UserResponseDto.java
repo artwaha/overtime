@@ -13,7 +13,7 @@ public class UserResponseDto<T> {
     private String mobile;
     private String checkNumber;
     private String pfNumber;
-    // private String title;
+    private Long attendanceId;
     private UserRoleEnum userRole;
     private T reference;
 
