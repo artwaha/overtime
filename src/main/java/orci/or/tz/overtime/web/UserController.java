@@ -101,14 +101,16 @@ public class UserController implements UserApi {
         }
 
         ApplicationUser u = user.get();
-        
-            u.setFullName(request.getFullName());
-            u.setEmail(request.getEmail());
-            u.setMobile(request.getMobile());
-            u.setPfNumber(request.getPfNumber());
-            u.setCheckNumber(request.getCheckNumber());
-            u.setUserRole(request.getUserRole());
-            u.setReference(request.getReference());
+
+        u.setUserName(request.getUserName());
+        u.setFullName(request.getFullName());
+        u.setEmail(request.getEmail());
+        u.setMobile(request.getMobile());
+        u.setPfNumber(request.getPfNumber());
+        u.setCheckNumber(request.getCheckNumber());
+        u.setUserRole(request.getUserRole());
+        u.setReference(request.getReference());
+        u.setAttendanceId(request.getAttendanceId());
           
             userService.SaveUser(u);
 
