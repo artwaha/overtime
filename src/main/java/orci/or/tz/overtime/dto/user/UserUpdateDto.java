@@ -6,6 +6,7 @@ import orci.or.tz.overtime.enums.UserRoleEnum;
 
 @Data
 public class UserUpdateDto {
+    private String userName;
     private String fullName;
     private String email;
     private String mobile;
@@ -13,4 +14,5 @@ public class UserUpdateDto {
     private String pfNumber;
     private UserRoleEnum userRole;
     private Long reference;
+    private Long attendanceId;
 }
