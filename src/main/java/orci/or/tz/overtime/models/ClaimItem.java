@@ -11,6 +11,7 @@ import orci.or.tz.overtime.enums.ClaimStatusEnum;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 
 @Data
@@ -43,6 +44,9 @@ public class ClaimItem implements Serializable {
 
     @Column(name="activities", nullable = false,columnDefinition = "TEXT")
     private String claimActivities;
+
+    @Column(name = "created_date", nullable = false)
+    private LocalDateTime createdDate;
 
 
 }

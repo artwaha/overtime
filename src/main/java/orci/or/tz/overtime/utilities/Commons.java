@@ -1,5 +1,6 @@
 package orci.or.tz.overtime.utilities;
 
+import orci.or.tz.overtime.dto.claims.ClaimItemResponseDto;
 import orci.or.tz.overtime.dto.claims.ClaimResponseDto;
 import orci.or.tz.overtime.dto.department.DepartmentResponseDto;
 import orci.or.tz.overtime.dto.directorate.DirectorateResponseDto;
@@ -32,6 +33,21 @@ public class Commons {
     private SectionService sectionService;
 
 
+
+    public ClaimItemResponseDto GenerateClaimItemMinor(ClaimItem c){
+        ModelMapper modelMapper = mapper.getModelMapper();
+        ClaimItemResponseDto claim = modelMapper.map(c,ClaimItemResponseDto.class);
+        return claim;
+
+    }
+
+    public ClaimItemResponseDto GenerateClaimItem(ClaimItem c){
+        ModelMapper modelMapper = mapper.getModelMapper();
+        ClaimItemResponseDto claim = modelMapper.map(c,ClaimItemResponseDto.class);
+        claim.setClaim(GenerateClaim(c.getClaim()));
+        return claim;
+
+    }
     public ClaimResponseDto GenerateClaim(OverTimeClaim c){
         ModelMapper modelMapper = mapper.getModelMapper();
         ClaimResponseDto claim = modelMapper.map(c,ClaimResponseDto.class);
