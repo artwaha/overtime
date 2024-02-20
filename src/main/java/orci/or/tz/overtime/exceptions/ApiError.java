@@ -9,29 +9,20 @@ import java.util.List;
 
 public class ApiError {
 
-    private Integer code;
-
-    public Integer getCode() {
-        return code;
-    }
-
-    public void setCode(Integer code) {
-        this.code = code;
-    }
-
     private HttpStatus status;
     private String message;
+    private HashMap<String,List<String>> errors;
 
-
-    public ApiError(HttpStatus status, String message, Integer code) {
+    public ApiError() {
         super();
-        status = status;
-        message = message;
-        code  = code;
-
+        status = HttpStatus.BAD_REQUEST;
+        message = "Invalid Request";
+        errors = new HashMap<String,List<String>>();
     }
 
-
+    public boolean hasErrors() {
+        return !this.errors.isEmpty();
+    }
 
     public HttpStatus getStatus() {
         return status;
@@ -49,6 +40,23 @@ public class ApiError {
         this.message = message;
     }
 
+    public HashMap<String, List<String>> getErrors() {
+        return errors;
+    }
 
+    public void setErrors(HashMap<String, List<String>> errors) {
+        this.errors = errors;
+    }
+
+    //TODO: Do error checking
+    public void addError(String key, String value) {
+        if (errors.containsKey(key)) {
+            errors.get(key).add(value);
+            return;
+        }
+        List<String> list = new ArrayList<String>();
+        list.add(value);
+        errors.put(key, list);
+    }
 
 }

@@ -3,10 +3,7 @@ package orci.or.tz.overtime.web.api;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import orci.or.tz.overtime.dto.claims.ClaimItemRequestDto;
-import orci.or.tz.overtime.dto.claims.ClaimItemResponseDto;
-import orci.or.tz.overtime.dto.claims.ClaimRequestDto;
-import orci.or.tz.overtime.dto.claims.ClaimResponseDto;
+import orci.or.tz.overtime.dto.claims.*;
 import orci.or.tz.overtime.exceptions.OperationFailedException;
 import orci.or.tz.overtime.exceptions.ResourceNotFoundException;
 import orci.or.tz.overtime.utilities.GenericResponse;
@@ -37,6 +34,19 @@ public interface ClaimApi {
     @ApiOperation(value = "Get Claim Items By Claim", notes = "Get Claim Items By Claim")
     @GetMapping(value = "user/item", produces = "application/json")
     ResponseEntity<GenericResponse<List<ClaimItemResponseDto>>> GetClaimItems(@RequestParam(defaultValue = "0", required = false) int page, @RequestParam(defaultValue = "10", required = false) int size, @RequestParam Long id) throws ResourceNotFoundException;
+
+
+    @ApiOperation(value = "Claim Item Actions", notes = "CLaim Item Actions")
+    @RequestMapping(value = "/item/action", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+    ResponseEntity<ClaimItemResponseDto> ClaimItemAction(@Valid @RequestBody ItemActionDto request) throws ResourceNotFoundException, OperationFailedException;
+
+    @ApiOperation(value = "Get Claim Item Trackings By Id", notes = "Get Claim Item Trackings By Id")
+    @RequestMapping(value = "/item/action/trackings/{id}", method = RequestMethod.GET, produces = "application/json")
+    ResponseEntity<List<ItemTrackingResponseDto>> GetClaimItemTrackingById(@PathVariable Long id) throws ResourceNotFoundException;
+
+    @ApiOperation(value = "Claim Actions", notes = "Claim  Actions")
+    @RequestMapping(value = "/action", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+    ResponseEntity<ClaimResponseDto> ClaimAction(@Valid @RequestBody ActionDto request) throws ResourceNotFoundException, OperationFailedException;
 
 
 }

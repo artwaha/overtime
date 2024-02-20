@@ -14,21 +14,16 @@ import orci.or.tz.overtime.models.ApplicationUser;
 public class AppUserDetails extends ApplicationUser {
 
     private static final long serialVersionUID = 1L;
-
     private Long id;
-
     private String username;
     private String fullName;
-
     private String mobile;
     private UserRoleEnum userRole;
-
     private String checkNumber;
-
     private String pfNumber;
-
     private Long reference;
     private UserStatusEnum userStatus;
+
 
 
 

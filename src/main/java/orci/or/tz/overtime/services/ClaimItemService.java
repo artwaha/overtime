@@ -33,4 +33,7 @@ public class ClaimItemService {
         return claimItemRepo.countByClaim(claim);
     }
 
+    public Optional<ClaimItem> GetItemById(Long id){
+        return claimItemRepo.findById(id);
+    }
 }
