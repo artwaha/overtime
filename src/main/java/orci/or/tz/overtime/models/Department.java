@@ -29,14 +29,8 @@ public class Department extends Auditable<Long> implements Serializable {
 
     @Column(name = "department_name", nullable = false)
     private String departmentName;
-
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "directorate_id", referencedColumnName = "directorate_id")
-    @JsonBackReference(value = "directorate-departments")
-    @EqualsAndHashCode.Exclude
-    @lombok.ToString.Exclude
-    private Directorate directorate;
-
+    
+    
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "department")
     @JsonManagedReference(value = "department-sections")
     @EqualsAndHashCode.Exclude

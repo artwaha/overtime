@@ -1,8 +1,6 @@
 package orci.or.tz.overtime.dto.department;
 
 import lombok.Data;
-
-import orci.or.tz.overtime.dto.directorate.DirectorateResponseDto;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -10,5 +8,5 @@ import org.springframework.stereotype.Component;
 public class DepartmentResponseDto {
     private Long id;
     private String departmentName;
-    private DirectorateResponseDto directorate;
+
 }

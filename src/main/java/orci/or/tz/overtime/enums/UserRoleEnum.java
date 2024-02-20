@@ -7,8 +7,7 @@ public enum UserRoleEnum {
 
     FINANCE,
 
-    DIRECTOR,
-    MANAGER,
+    HOD,
     SUPERVISOR,
     STAFF,
     VOLUNTEER

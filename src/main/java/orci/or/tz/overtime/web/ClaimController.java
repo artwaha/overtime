@@ -354,9 +354,9 @@ public class ClaimController implements ClaimApi {
                             ch1.setReason("Supervisor Own Approval");
                             ch1.setCreatedBy(usr);
                             claimHistoryService.SaveClaimHistory(ch1);
-                        } else if (c.getUser().getUserRole().equals(UserRoleEnum.MANAGER)) {
+                        } else if (c.getUser().getUserRole().equals(UserRoleEnum.HOD)) {
                             // Submit Claim
-                            c.setClaimStatus(ClaimStatusEnum.MANAGER_APPROVED);
+                            c.setClaimStatus(ClaimStatusEnum.HOD_APPROVED);
 
                             // Claim History
                             ClaimHistory ch = new ClaimHistory();
@@ -370,7 +370,7 @@ public class ClaimController implements ClaimApi {
                             // Claim History
                             ClaimHistory ch1 = new ClaimHistory();
                             ch1.setClaim(c);
-                            ch1.setClaimStatus(ClaimStatusEnum.MANAGER_APPROVED);
+                            ch1.setClaimStatus(ClaimStatusEnum.HOD_APPROVED);
                             ch1.setCreatedDate(LocalDateTime.now());
                             ch1.setReason("Manager Own Approval");
                             ch1.setCreatedBy(usr);

@@ -4,9 +4,7 @@ import orci.or.tz.overtime.dto.department.DepartmentRequestDto;
 import orci.or.tz.overtime.dto.department.DepartmentResponseDto;
 import orci.or.tz.overtime.exceptions.ResourceNotFoundException;
 import orci.or.tz.overtime.models.Department;
-import orci.or.tz.overtime.models.Directorate;
 import orci.or.tz.overtime.services.DepartmentService;
-import orci.or.tz.overtime.services.DirectorateService;
 import orci.or.tz.overtime.utilities.Commons;
 import orci.or.tz.overtime.utilities.GenericResponse;
 import orci.or.tz.overtime.utilities.LoggedUser;
@@ -27,8 +25,6 @@ public class DepartmentController implements DepartmentApi {
     @Autowired
     private DepartmentService departmentService;
 
-    @Autowired
-    private DirectorateService directorateService;
 
     @Autowired
     private Commons commons;
@@ -40,15 +36,10 @@ public class DepartmentController implements DepartmentApi {
 
     @Override
     public ResponseEntity<DepartmentResponseDto> CreateDepartment(DepartmentRequestDto request) throws ResourceNotFoundException {
-        Optional<Directorate> dir = directorateService.GetDirectorateById(request.getDirectorateId());
 
-        if (!dir.isPresent()) {
-            throw new ResourceNotFoundException("Directorate with provided ID [" + request.getDirectorateId() + "] does not exist.");
-        }
 
         Department d = new Department();
         d.setDepartmentName(request.getDepartmentName());
-        d.setDirectorate(dir.get());
         d.setCreatedDate(LocalDateTime.now());
         d.setCreatedBy(loggedUser.getInfo().getId());
         departmentService.SaveDepartment(d);
@@ -85,7 +76,7 @@ public class DepartmentController implements DepartmentApi {
         GenericResponse<List<DepartmentResponseDto>> response = new GenericResponse<>();
         response.setCurrentPage(page);
         response.setPageSize(size);
-        Integer totalCount = directorateService.countTotalItems();
+        Integer totalCount = departmentService.countTotalItems();
         response.setTotalItems(totalCount);
         response.setTotalPages(commons.GetTotalNumberOfPages(totalCount,size));
         response.setData(resp);
@@ -101,15 +92,10 @@ public class DepartmentController implements DepartmentApi {
             throw new ResourceNotFoundException("Department with provided ID [" + id + "] does not exist.");
         }
 
-        Optional<Directorate> dir = directorateService.GetDirectorateById(request.getDirectorateId());
 
-        if (!dir.isPresent()) {
-            throw new ResourceNotFoundException("Directorate with provided ID [" + request.getDirectorateId() + "] does not exist.");
-        }
 
         Department d = dep.get();
         d.setDepartmentName(request.getDepartmentName());
-        d.setDirectorate(dir.get());
         d.setLastModifiedDate(LocalDateTime.now());
         d.setLastModifiedBy(loggedUser.getInfo().getId());
         departmentService.SaveDepartment(d);
@@ -121,7 +107,7 @@ public class DepartmentController implements DepartmentApi {
 
     @Override
     public ResponseEntity <Integer>  CountDepartments() {
-        int total = directorateService.countTotalItems();
+        int total = departmentService.countTotalItems();
         return ResponseEntity.ok(total);
     }
 }

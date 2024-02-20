@@ -4,13 +4,11 @@ import orci.or.tz.overtime.dto.claims.ClaimItemResponseDto;
 import orci.or.tz.overtime.dto.claims.ClaimResponseDto;
 import orci.or.tz.overtime.dto.claims.ItemTrackingResponseDto;
 import orci.or.tz.overtime.dto.department.DepartmentResponseDto;
-import orci.or.tz.overtime.dto.directorate.DirectorateResponseDto;
 import orci.or.tz.overtime.dto.executive.ExecutiveResponseDto;
 import orci.or.tz.overtime.dto.section.SectionResponseDto;
 import orci.or.tz.overtime.dto.user.UserResponseDto;
 import orci.or.tz.overtime.models.*;
 import orci.or.tz.overtime.services.DepartmentService;
-import orci.or.tz.overtime.services.DirectorateService;
 import orci.or.tz.overtime.services.SectionService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +22,6 @@ public class Commons {
     @Autowired
     private Mapper mapper;
 
-    @Autowired
-    private DirectorateService directorateService;
 
     @Autowired
     private DepartmentService departmentService;
@@ -56,16 +52,10 @@ public class Commons {
 
     }
 
-    public DirectorateResponseDto GenerateDirectorate(Directorate s) {
-        ModelMapper modelMapper = mapper.getModelMapper();
-        DirectorateResponseDto d = modelMapper.map(s, DirectorateResponseDto.class);
-        return d;
-    }
 
     public DepartmentResponseDto GenerateDepartment(Department d) {
         ModelMapper modelMapper = mapper.getModelMapper();
         DepartmentResponseDto resp = modelMapper.map(d, DepartmentResponseDto.class);
-        resp.setDirectorate(GenerateDirectorate(d.getDirectorate()));
         return resp;
     }
 
@@ -97,13 +87,7 @@ public class Commons {
                 execDto.setReference(ed);
 
                 return execDto;
-            case "DIRECTOR":
-                UserResponseDto<DirectorateResponseDto> dirDto = modelMapper.map(u, UserResponseDto.class);
-                Long directorateId = u.getReference();
-                Optional<Directorate> dir = directorateService.GetDirectorateById(directorateId);
-                dirDto.setReference(GenerateDirectorate(dir.get()));
-                return dirDto;
-            case "MANAGER":
+            case "HOD":
                 UserResponseDto<DepartmentResponseDto> deptDto = modelMapper.map(u, UserResponseDto.class);
                 Long departmentId = u.getReference();
                 Optional<Department> dep = departmentService.GetDepartmentById(departmentId);

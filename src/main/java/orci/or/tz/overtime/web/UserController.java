@@ -47,9 +47,7 @@ public class UserController implements UserApi {
             throw new OperationFailedException("User with provided Attendance ID [" + request.getAttendanceId() + "] already exist.");
         }
 
-
-
-
+        
             ApplicationUser u = new ApplicationUser();
             u.setUserName(request.getUserName());
             u.setFullName(request.getFullName());

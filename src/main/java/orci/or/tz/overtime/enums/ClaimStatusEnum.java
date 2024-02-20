@@ -7,9 +7,9 @@ public enum ClaimStatusEnum {
 
     SUPERVISOR_APPROVED,
 
-    MANAGER_REJECT,
+    HOD_REJECT,
 
-    MANAGER_APPROVED,
+    HOD_APPROVED,
 
     HR_REJECTED,
 

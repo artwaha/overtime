@@ -7,5 +7,5 @@ import org.springframework.stereotype.Component;
 @Data
 public class DepartmentRequestDto {
     private String departmentName;
-    private Long directorateId;
+
 }

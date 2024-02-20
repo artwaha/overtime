@@ -8,10 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import orci.or.tz.overtime.dto.executive.ExecutiveResponseDto;
 import orci.or.tz.overtime.models.ApplicationUser;
 import orci.or.tz.overtime.models.Department;
-import orci.or.tz.overtime.models.Directorate;
 import orci.or.tz.overtime.models.Section;
 import orci.or.tz.overtime.services.DepartmentService;
-import orci.or.tz.overtime.services.DirectorateService;
 import orci.or.tz.overtime.services.SectionService;
 import orci.or.tz.overtime.utilities.Commons;
 import orci.or.tz.overtime.utilities.Mapper;
@@ -49,8 +47,6 @@ public class JwtTokenUtil implements Serializable {
     @Autowired
     private Commons commons;
 
-    @Autowired
-    private DirectorateService directorateService;
 
     @Autowired
     private DepartmentService departmentService;
@@ -72,6 +68,7 @@ public class JwtTokenUtil implements Serializable {
         claims.put("mobile",user.getMobile());
         claims.put("checkNumber",user.getCheckNumber());
         claims.put("pfNumber",user.getPfNumber());
+        claims.put("attendanceId",user.getAttendanceId());
 
         ModelMapper modelMapper = mapper.getModelMapper();
         switch (user.getUserRole().toString()) {
@@ -79,11 +76,7 @@ public class JwtTokenUtil implements Serializable {
 
                 ExecutiveResponseDto ed = new ExecutiveResponseDto();
                 claims.put("reference",ed);
-            case "DIRECTOR":
-
-                Optional<Directorate> dir = directorateService.GetDirectorateById(user.getReference());
-                claims.put("reference",dir.get());
-            case "MANAGER":
+            case "HOD":
                 Optional<Department> dep = departmentService.GetDepartmentById(user.getReference());
                 claims.put("reference",dep.get());
             case "SUPERVISOR":
