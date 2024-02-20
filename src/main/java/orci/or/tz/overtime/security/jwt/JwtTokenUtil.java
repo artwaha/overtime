@@ -142,6 +142,7 @@ public class JwtTokenUtil implements Serializable {
         claims.put("mobile",user.getMobile());
         claims.put("checkNumber",user.getCheckNumber());
         claims.put("pfNumber",user.getPfNumber());
+        claims.put("attendanceId",user.getAttendanceId());
 //       ModelMapper modelMapper = mapper.getModelMapper();
 //        switch (user.getUserRole().toString()) {
 //            case "EXECUTIVE_DIRECTOR":
