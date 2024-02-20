@@ -98,6 +98,21 @@ public class ClaimController implements ClaimApi {
     }
 
     @Override
+    public ResponseEntity<ClaimResponseDto> GetClaimById(Long id) throws ResourceNotFoundException {
+        Optional<OverTimeClaim> claim = claimService.GetClaimById(id);
+
+        if (!claim.isPresent()) {
+            throw new ResourceNotFoundException("Claim with provided ID [" + id + "] does not exist.");
+        } else {
+            // Generate Claim Response
+            ClaimResponseDto resp = commons.GenerateClaim(claim.get());
+
+            //Return  Claim Response
+            return ResponseEntity.ok(resp);
+        }
+    }
+
+    @Override
     public ResponseEntity<ClaimItemResponseDto> CreateClaimItem(ClaimItemRequestDto request) throws OperationFailedException, ResourceNotFoundException {
 
         Optional<OverTimeClaim> claim = claimService.GetClaimById(request.getClaimId());

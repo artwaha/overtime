@@ -22,6 +22,12 @@ public interface ClaimApi {
     @RequestMapping(value = "", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
     ResponseEntity<ClaimResponseDto> GenerateClaim(@Valid @RequestBody ClaimRequestDto request) throws OperationFailedException;
 
+
+    @ApiOperation(value = "Get Claim By Id", notes = "Get Claim By Id")
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = "application/json")
+    ResponseEntity<ClaimResponseDto> GetClaimById(@PathVariable Long id) throws ResourceNotFoundException;
+
+
     @ApiOperation(value = "Create Claim Item", notes = "Create Claim Item")
     @RequestMapping(value = "/request/item", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
     ResponseEntity<ClaimItemResponseDto> CreateClaimItem(@Valid @RequestBody ClaimItemRequestDto request) throws OperationFailedException, ResourceNotFoundException;
