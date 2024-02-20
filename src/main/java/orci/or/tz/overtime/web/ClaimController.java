@@ -127,41 +127,40 @@ public class ClaimController implements ClaimApi {
             if (claim.get().getClaimStatus().equals(ClaimStatusEnum.CREATED)) {
 
 
-                    // Make HTTP Request To Attendance Api to check if there is Records
+                // Make HTTP Request To Attendance Api to check if there is Records
 
-                    Integer checkAttendanceCount = attendanceService.GetAttendanceByUser(request.getClaimDate(), usr.getAttendanceId());
+                Integer checkAttendanceCount = attendanceService.GetAttendanceByUser(request.getClaimDate(), usr.getAttendanceId());
 
-                    if (checkAttendanceCount > 0) {
+                if (checkAttendanceCount > 0) {
 
-                        ClaimItem c = new ClaimItem();
-                        c.setClaim(claim.get());
-                        c.setClaimDate(request.getClaimDate());
-                        c.setClaimActivities(request.getClaimActivities());
-                        c.setItemStatus(ClaimItemStatusEnum.CREATED);
-                        c.setCreatedDate(LocalDateTime.now());
-                        claimItemService.SaveClaimItem(c);
+                    ClaimItem c = new ClaimItem();
+                    c.setClaim(claim.get());
+                    c.setClaimDate(request.getClaimDate());
+                    c.setClaimActivities(request.getClaimActivities());
+                    c.setItemStatus(ClaimItemStatusEnum.CREATED);
+                    c.setCreatedDate(LocalDateTime.now());
+                    claimItemService.SaveClaimItem(c);
 
-                        ClaimItemHistory ch = new ClaimItemHistory();
-                        ch.setClaimItem(c);
-                        ch.setCreatedBy(usr);
-                        ch.setCreatedDate(LocalDateTime.now());
-                        ch.setClaimItemStatus(ClaimItemStatusEnum.CREATED);
-                        claimItemHistoryService.SaveCalimItemHistory(ch);
-
-
-                        ClaimItemResponseDto resp = commons.GenerateClaimItem(c);
-                        return ResponseEntity.ok(resp);
+                    ClaimItemHistory ch = new ClaimItemHistory();
+                    ch.setClaimItem(c);
+                    ch.setCreatedBy(usr);
+                    ch.setCreatedDate(LocalDateTime.now());
+                    ch.setClaimItemStatus(ClaimItemStatusEnum.CREATED);
+                    claimItemHistoryService.SaveCalimItemHistory(ch);
 
 
-                    } else {
-                        throw new OperationFailedException("No Attendace Records For The User On the specified Date");
-                    }
+                    ClaimItemResponseDto resp = commons.GenerateClaimItem(c);
+                    return ResponseEntity.ok(resp);
+
+
+                } else {
+                    throw new OperationFailedException("No Attendace Records For The User On the specified Date");
+                }
 
 
             } else {
                 throw new OperationFailedException("Only Claim with the status CREATED can be added");
             }
-
 
         }
     }
@@ -339,6 +338,7 @@ public class ClaimController implements ClaimApi {
                         if (c.getUser().getUserRole().equals(UserRoleEnum.STAFF) || c.getUser().getUserRole().equals(UserRoleEnum.VOLUNTEER) || c.getUser().getUserRole().equals(UserRoleEnum.HR) || c.getUser().getUserRole().equals(UserRoleEnum.FINANCE)) {
                             // Submit Claim
                             c.setClaimStatus(ClaimStatusEnum.SUBMITTED);
+                            claimService.SaveClaim(c);
 
                             // Claim History
                             ClaimHistory ch = new ClaimHistory();
@@ -351,6 +351,7 @@ public class ClaimController implements ClaimApi {
                         } else if (c.getUser().getUserRole().equals(UserRoleEnum.SUPERVISOR)) {
                             // Submit Claim
                             c.setClaimStatus(ClaimStatusEnum.SUPERVISOR_APPROVED);
+                            claimService.SaveClaim(c);
 
                             // Claim History
                             ClaimHistory ch = new ClaimHistory();
@@ -372,6 +373,8 @@ public class ClaimController implements ClaimApi {
                         } else if (c.getUser().getUserRole().equals(UserRoleEnum.HOD)) {
                             // Submit Claim
                             c.setClaimStatus(ClaimStatusEnum.HOD_APPROVED);
+                            claimService.SaveClaim(c);
+
 
                             // Claim History
                             ClaimHistory ch = new ClaimHistory();
@@ -403,9 +406,51 @@ public class ClaimController implements ClaimApi {
                     throw new OperationFailedException("Claim has no items. Cannot be submitted");
                 }
 
-            }else{
-                throw new OperationFailedException("Tunafanyia kazi hizo status nyingine ");
-            }
+            } else
+                if (request.getAction().equals(ClaimStatusEnum.SUPERVISOR_REJECTED)) {
+
+                    // Check If Claim Status is Submitted
+                    if(c.getClaimStatus().equals(ClaimStatusEnum.SUBMITTED)){
+
+                        c.setClaimStatus(ClaimStatusEnum.SUPERVISOR_REJECTED);
+                        claimService.SaveClaim(c);
+
+                        // Claim History
+                        ClaimHistory ch = new ClaimHistory();
+                        ch.setClaim(c);
+                        ch.setClaimStatus(ClaimStatusEnum.SUPERVISOR_REJECTED);
+                        ch.setCreatedDate(LocalDateTime.now());
+                        ch.setReason("");
+                        ch.setCreatedBy(usr);
+                        claimHistoryService.SaveClaimHistory(ch);
+
+                    }else{
+                        throw new OperationFailedException("Claim cannot be Rejected because of Status " + c.getClaimStatus());
+                    }
+
+            }else
+                if (request.getAction().equals(ClaimStatusEnum.SUPERVISOR_APPROVED)) {
+
+                    // Check If Claim Status is Submitted
+                    if(c.getClaimStatus().equals(ClaimStatusEnum.SUBMITTED)){
+
+                        c.setClaimStatus(ClaimStatusEnum.SUPERVISOR_APPROVED);
+                        claimService.SaveClaim(c);
+
+                        // Claim History
+                        ClaimHistory ch = new ClaimHistory();
+                        ch.setClaim(c);
+                        ch.setClaimStatus(ClaimStatusEnum.SUPERVISOR_APPROVED);
+                        ch.setCreatedDate(LocalDateTime.now());
+                        ch.setReason("");
+                        ch.setCreatedBy(usr);
+                        claimHistoryService.SaveClaimHistory(ch);
+
+                    }else{
+                        throw new OperationFailedException("Claim cannot be Approved because of Status " + c.getClaimStatus());
+                    }
+
+                }
 
             // Generate Claim Response
             ClaimResponseDto resp = commons.GenerateClaim(c);
@@ -416,5 +461,26 @@ public class ClaimController implements ClaimApi {
         }
     }
 
+    @Override
+    public ResponseEntity<List<TrackingResponseDto>> GetClaimTrackingById(Long id) throws ResourceNotFoundException {
+        Optional<OverTimeClaim> claim = claimService.GetClaimById(id);
+
+        if (!claim.isPresent()) {
+            throw new ResourceNotFoundException("Claim with provided ID [" + id + "] does not exist.");
+        } else {
+
+            OverTimeClaim c = claim.get();
+            List<ClaimHistory> claims = claimHistoryService.GetByClaim(c);
+            List<TrackingResponseDto> resp = new ArrayList<>();
+
+            for (ClaimHistory ch : claims) {
+                TrackingResponseDto t = commons.GenerateHistory(ch);
+                resp.add(t);
+            }
+
+            return ResponseEntity.ok(resp);
+
+        }
+    }
 
 }

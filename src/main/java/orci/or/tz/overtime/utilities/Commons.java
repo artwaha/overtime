@@ -3,6 +3,7 @@ package orci.or.tz.overtime.utilities;
 import orci.or.tz.overtime.dto.claims.ClaimItemResponseDto;
 import orci.or.tz.overtime.dto.claims.ClaimResponseDto;
 import orci.or.tz.overtime.dto.claims.ItemTrackingResponseDto;
+import orci.or.tz.overtime.dto.claims.TrackingResponseDto;
 import orci.or.tz.overtime.dto.department.DepartmentResponseDto;
 import orci.or.tz.overtime.dto.executive.ExecutiveResponseDto;
 import orci.or.tz.overtime.dto.section.SectionResponseDto;
@@ -115,6 +116,17 @@ public class Commons {
         ItemTrackingResponseDto resp = new ItemTrackingResponseDto();
         resp.setId(c.getId());
         resp.setAction(c.getClaimItemStatus());
+        resp.setCreatedDate(c.getCreatedDate());
+        resp.setReason(c.getReason());
+        resp.setUser(GenerateUser(c.getCreatedBy()));
+        return resp;
+    }
+
+
+    public TrackingResponseDto GenerateHistory(ClaimHistory c){
+        TrackingResponseDto resp = new TrackingResponseDto();
+        resp.setId(c.getId());
+        resp.setAction(c.getClaimStatus());
         resp.setCreatedDate(c.getCreatedDate());
         resp.setReason(c.getReason());
         resp.setUser(GenerateUser(c.getCreatedBy()));

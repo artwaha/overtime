@@ -47,12 +47,15 @@ public interface ClaimApi {
     ResponseEntity<ClaimItemResponseDto> ClaimItemAction(@Valid @RequestBody ItemActionDto request) throws ResourceNotFoundException, OperationFailedException;
 
     @ApiOperation(value = "Get Claim Item Trackings By Id", notes = "Get Claim Item Trackings By Id")
-    @RequestMapping(value = "/item/action/trackings/{id}", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/item/trackings/{id}", method = RequestMethod.GET, produces = "application/json")
     ResponseEntity<List<ItemTrackingResponseDto>> GetClaimItemTrackingById(@PathVariable Long id) throws ResourceNotFoundException;
 
     @ApiOperation(value = "Claim Actions", notes = "Claim  Actions")
     @RequestMapping(value = "/action", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
     ResponseEntity<ClaimResponseDto> ClaimAction(@Valid @RequestBody ActionDto request) throws ResourceNotFoundException, OperationFailedException;
 
+    @ApiOperation(value = "Get Claim Trackings By Id", notes = "Get Claim Trackings By Id")
+    @RequestMapping(value = "/trackings/{id}", method = RequestMethod.GET, produces = "application/json")
+    ResponseEntity<List<TrackingResponseDto>> GetClaimTrackingById(@PathVariable Long id) throws ResourceNotFoundException;
 
 }

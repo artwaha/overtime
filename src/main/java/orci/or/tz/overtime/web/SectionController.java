@@ -34,7 +34,6 @@ public class SectionController implements SectionApi {
     @Autowired
     private Commons commons;
 
-
     @Autowired
     private LoggedUser loggedUser;
 
