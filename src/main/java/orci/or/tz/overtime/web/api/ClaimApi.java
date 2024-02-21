@@ -4,6 +4,8 @@ package orci.or.tz.overtime.web.api;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import orci.or.tz.overtime.dto.claims.*;
+import orci.or.tz.overtime.enums.ClaimStatusEnum;
+import orci.or.tz.overtime.enums.MonthEnum;
 import orci.or.tz.overtime.exceptions.OperationFailedException;
 import orci.or.tz.overtime.exceptions.ResourceNotFoundException;
 import orci.or.tz.overtime.utilities.GenericResponse;
@@ -57,5 +59,14 @@ public interface ClaimApi {
     @ApiOperation(value = "Get Claim Trackings By Id", notes = "Get Claim Trackings By Id")
     @RequestMapping(value = "/trackings/{id}", method = RequestMethod.GET, produces = "application/json")
     ResponseEntity<List<TrackingResponseDto>> GetClaimTrackingById(@PathVariable Long id) throws ResourceNotFoundException;
+
+
+    @ApiOperation(value = "Get Claims For Approval", notes = "Get Claims For Approval")
+    @GetMapping(value = "approval/search", produces = "application/json")
+    ResponseEntity<GenericResponse<List<ClaimResponseDto>>> GetClaimsForApproval(@RequestParam(defaultValue = "0", required = false) int page, @RequestParam(defaultValue = "10", required = false) int size, @RequestParam MonthEnum month, @RequestParam ClaimStatusEnum status, @RequestParam Integer year) throws OperationFailedException;
+
+    @ApiOperation(value = "Get Claims By Criteria", notes = "Get Claims By Criteria")
+    @GetMapping(value = "/search", produces = "application/json")
+    ResponseEntity<GenericResponse<List<ClaimResponseDto>>> GetClaimsByCriteria(@RequestParam(defaultValue = "0", required = false) int page, @RequestParam(defaultValue = "10", required = false) int size, @RequestParam MonthEnum month, @RequestParam ClaimStatusEnum status, @RequestParam Integer year) throws OperationFailedException;
 
 }

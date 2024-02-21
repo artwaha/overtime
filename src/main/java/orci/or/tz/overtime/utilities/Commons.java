@@ -15,6 +15,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -131,5 +133,22 @@ public class Commons {
         resp.setReason(c.getReason());
         resp.setUser(GenerateUser(c.getCreatedBy()));
         return resp;
+    }
+
+    public List<Long> GenerateReferenceList(Long reference){
+
+        List<Long> resp = new ArrayList<>();
+        Optional<Department> department = departmentService.GetDepartmentById(reference);
+
+        if(department.isPresent()){
+
+            List<Section> sections = sectionService.GetByDepartment(department.get());
+            for(Section s : sections){
+                resp.add(s.getId());
+            }
+        }
+
+        return resp;
+
     }
 }

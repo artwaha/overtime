@@ -1,5 +1,6 @@
 package orci.or.tz.overtime.services;
 
+import orci.or.tz.overtime.models.Department;
 import orci.or.tz.overtime.models.Section;
 import orci.or.tz.overtime.repository.SectionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,5 +32,9 @@ public class SectionService {
 
     public int countTotalItems() {
         return (int) sectionRepo.count();
+    }
+
+    public List<Section> GetByDepartment(Department department) {
+        return sectionRepo.findByDepartment(department);
     }
 }

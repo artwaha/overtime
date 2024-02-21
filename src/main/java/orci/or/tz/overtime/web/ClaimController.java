@@ -4,6 +4,7 @@ package orci.or.tz.overtime.web;
 import orci.or.tz.overtime.dto.claims.*;
 import orci.or.tz.overtime.enums.ClaimItemStatusEnum;
 import orci.or.tz.overtime.enums.ClaimStatusEnum;
+import orci.or.tz.overtime.enums.MonthEnum;
 import orci.or.tz.overtime.enums.UserRoleEnum;
 import orci.or.tz.overtime.exceptions.OperationFailedException;
 import orci.or.tz.overtime.exceptions.ResourceNotFoundException;
@@ -406,51 +407,49 @@ public class ClaimController implements ClaimApi {
                     throw new OperationFailedException("Claim has no items. Cannot be submitted");
                 }
 
-            } else
-                if (request.getAction().equals(ClaimStatusEnum.SUPERVISOR_REJECTED)) {
+            } else if (request.getAction().equals(ClaimStatusEnum.SUPERVISOR_REJECTED)) {
 
-                    // Check If Claim Status is Submitted
-                    if(c.getClaimStatus().equals(ClaimStatusEnum.SUBMITTED)){
+                // Check If Claim Status is Submitted
+                if (c.getClaimStatus().equals(ClaimStatusEnum.SUBMITTED)) {
 
-                        c.setClaimStatus(ClaimStatusEnum.SUPERVISOR_REJECTED);
-                        claimService.SaveClaim(c);
+                    c.setClaimStatus(ClaimStatusEnum.SUPERVISOR_REJECTED);
+                    claimService.SaveClaim(c);
 
-                        // Claim History
-                        ClaimHistory ch = new ClaimHistory();
-                        ch.setClaim(c);
-                        ch.setClaimStatus(ClaimStatusEnum.SUPERVISOR_REJECTED);
-                        ch.setCreatedDate(LocalDateTime.now());
-                        ch.setReason("");
-                        ch.setCreatedBy(usr);
-                        claimHistoryService.SaveClaimHistory(ch);
+                    // Claim History
+                    ClaimHistory ch = new ClaimHistory();
+                    ch.setClaim(c);
+                    ch.setClaimStatus(ClaimStatusEnum.SUPERVISOR_REJECTED);
+                    ch.setCreatedDate(LocalDateTime.now());
+                    ch.setReason("");
+                    ch.setCreatedBy(usr);
+                    claimHistoryService.SaveClaimHistory(ch);
 
-                    }else{
-                        throw new OperationFailedException("Claim cannot be Rejected because of Status " + c.getClaimStatus());
-                    }
-
-            }else
-                if (request.getAction().equals(ClaimStatusEnum.SUPERVISOR_APPROVED)) {
-
-                    // Check If Claim Status is Submitted
-                    if(c.getClaimStatus().equals(ClaimStatusEnum.SUBMITTED)){
-
-                        c.setClaimStatus(ClaimStatusEnum.SUPERVISOR_APPROVED);
-                        claimService.SaveClaim(c);
-
-                        // Claim History
-                        ClaimHistory ch = new ClaimHistory();
-                        ch.setClaim(c);
-                        ch.setClaimStatus(ClaimStatusEnum.SUPERVISOR_APPROVED);
-                        ch.setCreatedDate(LocalDateTime.now());
-                        ch.setReason("");
-                        ch.setCreatedBy(usr);
-                        claimHistoryService.SaveClaimHistory(ch);
-
-                    }else{
-                        throw new OperationFailedException("Claim cannot be Approved because of Status " + c.getClaimStatus());
-                    }
-
+                } else {
+                    throw new OperationFailedException("Claim cannot be Rejected because of Status " + c.getClaimStatus());
                 }
+
+            } else if (request.getAction().equals(ClaimStatusEnum.SUPERVISOR_APPROVED)) {
+
+                // Check If Claim Status is Submitted
+                if (c.getClaimStatus().equals(ClaimStatusEnum.SUBMITTED)) {
+
+                    c.setClaimStatus(ClaimStatusEnum.SUPERVISOR_APPROVED);
+                    claimService.SaveClaim(c);
+
+                    // Claim History
+                    ClaimHistory ch = new ClaimHistory();
+                    ch.setClaim(c);
+                    ch.setClaimStatus(ClaimStatusEnum.SUPERVISOR_APPROVED);
+                    ch.setCreatedDate(LocalDateTime.now());
+                    ch.setReason("");
+                    ch.setCreatedBy(usr);
+                    claimHistoryService.SaveClaimHistory(ch);
+
+                } else {
+                    throw new OperationFailedException("Claim cannot be Approved because of Status " + c.getClaimStatus());
+                }
+
+            }
 
             // Generate Claim Response
             ClaimResponseDto resp = commons.GenerateClaim(c);
@@ -481,6 +480,113 @@ public class ClaimController implements ClaimApi {
             return ResponseEntity.ok(resp);
 
         }
+    }
+
+    @Override
+    public ResponseEntity<GenericResponse<List<ClaimResponseDto>>> GetClaimsForApproval(int page, int size, MonthEnum month, ClaimStatusEnum status, Integer year) throws OperationFailedException {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        ApplicationUser usr = loggedUser.getInfo();
+
+        List<OverTimeClaim> claims = new ArrayList<>();
+        Long count = 0L;
+
+        if (usr.getUserRole().equals(UserRoleEnum.SUPERVISOR)) {
+            Long reference = usr.getReference();
+
+            if (month == null || status == null || year == null) {
+                claims = claimService.GetClaimByReference(reference, pageRequest);
+                count = claimService.CountClaimByReference(reference);
+            } else if (month == null || status != null || year == null) {
+                claims = claimService.GetClaimByReferenceAndStatus(reference, status, pageRequest);
+                count = claimService.CountClaimByReferenceAndStatus(reference, status);
+            } else if (month != null || status == null || year != null) {
+                claims = claimService.GetClaimByReferenceAndMonthAndYear(reference, month, year, pageRequest);
+                count = claimService.CountClaimByReferenceAndMonthAndYear(reference, month, year);
+            } else if (month != null || status != null || year != null) {
+                claims = claimService.GetClaimByReferenceAndMonthAndYearAndStatus(reference, status, month, year, pageRequest);
+                count = claimService.CountClaimByReferenceAndMonthAndYearAndStatus(reference, status, month, year);
+            }
+
+
+        } else if (usr.getUserRole().equals(UserRoleEnum.HOD)) {
+            List reference = commons.GenerateReferenceList(usr.getReference());
+
+            if (month == null || status == null || year == null) {
+                claims = claimService.GetClaimByReferenceList(reference, pageRequest);
+                count = claimService.CountClaimByReferenceList(reference);
+            } else if (month == null || status != null || year == null) {
+                claims = claimService.GetClaimByReferenceAndStatusList(reference, status, pageRequest);
+                count = claimService.CountClaimByReferenceAndStatusList(reference, status);
+            } else if (month != null || status == null || year != null) {
+                claims = claimService.GetClaimByReferenceAndMonthAndYearList(reference, month, year, pageRequest);
+                count = claimService.CountClaimByReferenceAndMonthAndYearList(reference, month, year);
+            } else if (month != null || status != null || year != null) {
+                claims = claimService.GetClaimByReferenceAndMonthAndYearAndStatusList(reference, status, month, year, pageRequest);
+                count = claimService.CountClaimByReferenceAndMonthAndYearAndStatusList(reference, status, month, year);
+            }
+
+
+        } else {
+            throw new OperationFailedException("Only User with UserRole Supervisor and  HOD can Access This Endpoint");
+        }
+
+
+        List<ClaimResponseDto> resp = new ArrayList<>();
+
+        for (OverTimeClaim c : claims) {
+            ClaimResponseDto r = commons.GenerateClaim(c);
+            resp.add(r);
+        }
+
+        GenericResponse<List<ClaimResponseDto>> response = new GenericResponse<>();
+        response.setCurrentPage(page);
+        response.setPageSize(size);
+        Integer totalCount = count.intValue();
+        response.setTotalItems(totalCount);
+        response.setTotalPages(commons.GetTotalNumberOfPages(totalCount, size));
+        response.setData(resp);
+        return ResponseEntity.ok(response);
+    }
+
+    @Override
+    public ResponseEntity<GenericResponse<List<ClaimResponseDto>>> GetClaimsByCriteria(int page, int size, MonthEnum month, ClaimStatusEnum status, Integer year) throws OperationFailedException {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        ApplicationUser usr = loggedUser.getInfo();
+
+        List<OverTimeClaim> claims = new ArrayList<>();
+        Long count = 0L;
+
+
+        if (month == null || status == null || year == null) {
+            claims = claimService.GetAllClaims(pageRequest);
+            count = claimService.CountAllClaims();
+        } else if (month == null || status != null || year == null) {
+            claims = claimService.GetClaimByStatus(status, pageRequest);
+            count = claimService.CountClaimByStatus(status);
+        } else if (month != null || status == null || year != null) {
+            claims = claimService.GetClaimByMonthAndYear(month, year, pageRequest);
+            count = claimService.CountClaimByMonthAndYear(month, year);
+        } else if (month != null || status != null || year != null) {
+            claims = claimService.GetClaimByMonthAndYearAndStatus(status, month, year, pageRequest);
+            count = claimService.CountClaimByMonthAndYearAndStatus(status, month, year);
+        }
+
+
+        List<ClaimResponseDto> resp = new ArrayList<>();
+
+        for (OverTimeClaim c : claims) {
+            ClaimResponseDto r = commons.GenerateClaim(c);
+            resp.add(r);
+        }
+
+        GenericResponse<List<ClaimResponseDto>> response = new GenericResponse<>();
+        response.setCurrentPage(page);
+        response.setPageSize(size);
+        Integer totalCount = count.intValue();
+        response.setTotalItems(totalCount);
+        response.setTotalPages(commons.GetTotalNumberOfPages(totalCount, size));
+        response.setData(resp);
+        return ResponseEntity.ok(response);
     }
 
 }

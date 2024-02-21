@@ -1,6 +1,7 @@
 package orci.or.tz.overtime.repository;
 
 
+import orci.or.tz.overtime.models.Department;
 import orci.or.tz.overtime.models.Section;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,4 +13,6 @@ import java.util.List;
 public interface SectionRepository extends JpaRepository<Section, Long> {
 
     List<Section> findAllByOrderByIdDesc(Pageable pageRequest);
+
+    List<Section> findByDepartment( Department department);
 }
