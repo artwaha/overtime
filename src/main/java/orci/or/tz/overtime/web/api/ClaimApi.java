@@ -63,10 +63,10 @@ public interface ClaimApi {
 
     @ApiOperation(value = "Get Claims For Approval", notes = "Get Claims For Approval")
     @GetMapping(value = "approval/search", produces = "application/json")
-    ResponseEntity<GenericResponse<List<ClaimResponseDto>>> GetClaimsForApproval(@RequestParam(defaultValue = "0", required = false) int page, @RequestParam(defaultValue = "10", required = false) int size, @RequestParam MonthEnum month, @RequestParam ClaimStatusEnum status, @RequestParam Integer year) throws OperationFailedException;
+    ResponseEntity<GenericResponse<List<ClaimResponseDto>>> GetClaimsForApproval(@RequestParam(defaultValue = "0", required = false) int page, @RequestParam(defaultValue = "10", required = false) int size, @RequestParam(required = false) MonthEnum month, @RequestParam(required = false) ClaimStatusEnum status, @RequestParam(required = false) Integer year) throws OperationFailedException;
 
     @ApiOperation(value = "Get Claims By Criteria", notes = "Get Claims By Criteria")
     @GetMapping(value = "/search", produces = "application/json")
-    ResponseEntity<GenericResponse<List<ClaimResponseDto>>> GetClaimsByCriteria(@RequestParam(defaultValue = "0", required = false) int page, @RequestParam(defaultValue = "10", required = false) int size, @RequestParam MonthEnum month, @RequestParam ClaimStatusEnum status, @RequestParam Integer year) throws OperationFailedException;
+    ResponseEntity<GenericResponse<List<ClaimResponseDto>>> GetClaimsByCriteria(@RequestParam(defaultValue = "0", required = false) int page, @RequestParam(defaultValue = "10", required = false) int size, @RequestParam(required = false) MonthEnum month, @RequestParam(required = false) ClaimStatusEnum status, @RequestParam(required = false) Integer year) throws OperationFailedException;
 
 }
