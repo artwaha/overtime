@@ -493,16 +493,16 @@ public class ClaimController implements ClaimApi {
         if (usr.getUserRole().equals(UserRoleEnum.SUPERVISOR)) {
             Long reference = usr.getReference();
 
-            if (month == null || status == null || year == null) {
+            if (month == null && status == null && year == null) {
                 claims = claimService.GetClaimByReference(reference, pageRequest);
                 count = claimService.CountClaimByReference(reference);
-            } else if (month == null || status != null || year == null) {
+            } else if (month == null && status != null && year == null) {
                 claims = claimService.GetClaimByReferenceAndStatus(reference, status, pageRequest);
                 count = claimService.CountClaimByReferenceAndStatus(reference, status);
-            } else if (month != null || status == null || year != null) {
+            } else if (month != null && status == null && year != null) {
                 claims = claimService.GetClaimByReferenceAndMonthAndYear(reference, month, year, pageRequest);
                 count = claimService.CountClaimByReferenceAndMonthAndYear(reference, month, year);
-            } else if (month != null || status != null || year != null) {
+            } else if (month != null && status != null && year != null) {
                 claims = claimService.GetClaimByReferenceAndMonthAndYearAndStatus(reference, status, month, year, pageRequest);
                 count = claimService.CountClaimByReferenceAndMonthAndYearAndStatus(reference, status, month, year);
             }
@@ -511,16 +511,16 @@ public class ClaimController implements ClaimApi {
         } else if (usr.getUserRole().equals(UserRoleEnum.HOD)) {
             List reference = commons.GenerateReferenceList(usr.getReference());
 
-            if (month == null || status == null || year == null) {
+            if (month == null && status == null && year == null) {
                 claims = claimService.GetClaimByReferenceList(reference, pageRequest);
                 count = claimService.CountClaimByReferenceList(reference);
-            } else if (month == null || status != null || year == null) {
+            } else if (month == null && status != null && year == null) {
                 claims = claimService.GetClaimByReferenceAndStatusList(reference, status, pageRequest);
                 count = claimService.CountClaimByReferenceAndStatusList(reference, status);
-            } else if (month != null || status == null || year != null) {
+            } else if (month != null && status == null && year != null) {
                 claims = claimService.GetClaimByReferenceAndMonthAndYearList(reference, month, year, pageRequest);
                 count = claimService.CountClaimByReferenceAndMonthAndYearList(reference, month, year);
-            } else if (month != null || status != null || year != null) {
+            } else if (month != null && status != null && year != null) {
                 claims = claimService.GetClaimByReferenceAndMonthAndYearAndStatusList(reference, status, month, year, pageRequest);
                 count = claimService.CountClaimByReferenceAndMonthAndYearAndStatusList(reference, status, month, year);
             }
@@ -557,16 +557,16 @@ public class ClaimController implements ClaimApi {
         Long count = 0L;
 
 
-        if (month == null || status == null || year == null) {
+        if (month == null && status == null && year == null) {
             claims = claimService.GetAllClaims(pageRequest);
             count = claimService.CountAllClaims();
-        } else if (month == null || status != null || year == null) {
+        } else if (month == null && status != null && year == null) {
             claims = claimService.GetClaimByStatus(status, pageRequest);
             count = claimService.CountClaimByStatus(status);
-        } else if (month != null || status == null || year != null) {
+        } else if (month != null && status == null && year != null) {
             claims = claimService.GetClaimByMonthAndYear(month, year, pageRequest);
             count = claimService.CountClaimByMonthAndYear(month, year);
-        } else if (month != null || status != null || year != null) {
+        } else if (month != null && status != null && year != null) {
             claims = claimService.GetClaimByMonthAndYearAndStatus(status, month, year, pageRequest);
             count = claimService.CountClaimByMonthAndYearAndStatus(status, month, year);
         }
