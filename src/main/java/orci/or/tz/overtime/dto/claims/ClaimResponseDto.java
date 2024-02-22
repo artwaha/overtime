@@ -1,6 +1,7 @@
 package orci.or.tz.overtime.dto.claims;
 
 import lombok.Data;
+import orci.or.tz.overtime.dto.user.UserResponseDto;
 import orci.or.tz.overtime.enums.ClaimStatusEnum;
 import orci.or.tz.overtime.enums.MonthEnum;
 
@@ -11,4 +12,5 @@ public class ClaimResponseDto {
     private ClaimStatusEnum claimStatus;
     private MonthEnum claimMonth;
     private Integer claimYear;
+    private UserResponseDto user;
 }

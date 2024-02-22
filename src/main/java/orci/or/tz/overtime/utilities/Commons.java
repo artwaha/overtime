@@ -52,6 +52,7 @@ public class Commons {
     public ClaimResponseDto GenerateClaim(OverTimeClaim c){
         ModelMapper modelMapper = mapper.getModelMapper();
         ClaimResponseDto claim = modelMapper.map(c,ClaimResponseDto.class);
+        claim.setUser(GenerateUser(c.getUser()));
         return claim;
 
     }
