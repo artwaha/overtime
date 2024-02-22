@@ -99,6 +99,47 @@ public class ClaimController implements ClaimApi {
     }
 
     @Override
+    public ResponseEntity<ClaimResponseDto> UpdateClaim(ClaimRequestDto request, Long id) throws ResourceNotFoundException, OperationFailedException {
+        Optional<OverTimeClaim> claim = claimService.GetClaimById(id);
+        ApplicationUser usr = loggedUser.getInfo();
+
+        if (!claim.isPresent()) {
+            throw new ResourceNotFoundException("Claim with provided ID [" + id + "] does not exist.");
+        } else {
+
+            OverTimeClaim c = claim.get();
+
+            if (c.getClaimStatus().equals(ClaimStatusEnum.CREATED)) {
+
+                // Check if claim has any items
+                List<ClaimItem> items = claimItemService.GetByClaim(c, null);
+                Integer itemsCount = items.size();
+
+                if (itemsCount > 0) {
+                    throw new OperationFailedException("Only Claim with NO items can be edited");
+                } else {
+
+                    c.setClaimMonth(request.getMonth());
+                    c.setClaimYear(request.getYear());
+                    c.setLastModifiedBy(usr.getId());
+                    c.setLastModifiedDate(LocalDateTime.now());
+                    claimService.SaveClaim(c);
+
+                    // Generate Claim Response
+                    ClaimResponseDto resp = commons.GenerateClaim(c);
+
+                    //Return  Claim Response
+                    return ResponseEntity.ok(resp);
+                }
+
+            } else {
+                throw new OperationFailedException("Only Claim with status SUBMITTED can be edited");
+            }
+
+        }
+    }
+
+    @Override
     public ResponseEntity<ClaimResponseDto> GetClaimById(Long id) throws ResourceNotFoundException {
         Optional<OverTimeClaim> claim = claimService.GetClaimById(id);
 
@@ -121,7 +162,7 @@ public class ClaimController implements ClaimApi {
         ApplicationUser usr = loggedUser.getInfo();
 
         if (!claim.isPresent()) {
-            throw new ResourceNotFoundException("Claim with the provided ID is not Found");
+            throw new ResourceNotFoundException("Claim with provided ID [" + request.getClaimId() + "] does not exist.");
         } else {
 
 
@@ -161,6 +202,29 @@ public class ClaimController implements ClaimApi {
 
             } else {
                 throw new OperationFailedException("Only Claim with the status CREATED can be added");
+            }
+
+        }
+    }
+
+    @Override
+    public ResponseEntity<ClaimItemResponseDto> UpdateClaimItem(ClaimItemUpdateDto request, Long id) throws ResourceNotFoundException, OperationFailedException {
+        Optional<ClaimItem> item = claimItemService.GetItemById(id);
+
+        if (!item.isPresent()) {
+            throw new ResourceNotFoundException("Claim Item with provided ID [" + id + "] does not exist.");
+        } else {
+
+            if(item.get().getItemStatus().equals(ClaimItemStatusEnum.CREATED))
+            {
+                ClaimItem ch = item.get();
+                ch.setClaimActivities(request.getClaimActivities());
+                claimItemService.SaveClaimItem(ch);
+                ClaimItemResponseDto resp = commons.GenerateClaimItem(ch);
+                return ResponseEntity.ok(resp);
+
+            }else{
+                throw new OperationFailedException("Claim Item Cannot be Edited because of Status ");
             }
 
         }
@@ -337,18 +401,30 @@ public class ClaimController implements ClaimApi {
                         // Check Claim User For Submitting
 
                         if (c.getUser().getUserRole().equals(UserRoleEnum.STAFF) || c.getUser().getUserRole().equals(UserRoleEnum.VOLUNTEER) || c.getUser().getUserRole().equals(UserRoleEnum.HR) || c.getUser().getUserRole().equals(UserRoleEnum.FINANCE)) {
-                            // Submit Claim
-                            c.setClaimStatus(ClaimStatusEnum.SUBMITTED);
-                            claimService.SaveClaim(c);
 
-                            // Claim History
-                            ClaimHistory ch = new ClaimHistory();
-                            ch.setClaim(c);
-                            ch.setClaimStatus(ClaimStatusEnum.SUBMITTED);
-                            ch.setCreatedDate(LocalDateTime.now());
-                            ch.setReason("");
-                            ch.setCreatedBy(usr);
-                            claimHistoryService.SaveClaimHistory(ch);
+
+                            // Check for Claim Items
+
+                            Boolean check = commons.CheckItemsValidity(items);
+
+                            if(check.equals(true)){
+                                // Submit Claim
+                                c.setClaimStatus(ClaimStatusEnum.SUBMITTED);
+                                claimService.SaveClaim(c);
+
+                                // Claim History
+                                ClaimHistory ch = new ClaimHistory();
+                                ch.setClaim(c);
+                                ch.setClaimStatus(ClaimStatusEnum.SUBMITTED);
+                                ch.setCreatedDate(LocalDateTime.now());
+                                ch.setReason("");
+                                ch.setCreatedBy(usr);
+                                claimHistoryService.SaveClaimHistory(ch);
+                            }else{
+                                throw new OperationFailedException("Cannot Submit because Claim Items have been Modified");
+                            }
+
+
                         } else if (c.getUser().getUserRole().equals(UserRoleEnum.SUPERVISOR)) {
                             // Submit Claim
                             c.setClaimStatus(ClaimStatusEnum.SUPERVISOR_APPROVED);

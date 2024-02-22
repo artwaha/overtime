@@ -4,6 +4,7 @@ package orci.or.tz.overtime.web.api;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import orci.or.tz.overtime.dto.claims.*;
+import orci.or.tz.overtime.dto.section.SectionResponseDto;
 import orci.or.tz.overtime.enums.ClaimStatusEnum;
 import orci.or.tz.overtime.enums.MonthEnum;
 import orci.or.tz.overtime.exceptions.OperationFailedException;
@@ -24,6 +25,10 @@ public interface ClaimApi {
     @RequestMapping(value = "", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
     ResponseEntity<ClaimResponseDto> GenerateClaim(@Valid @RequestBody ClaimRequestDto request) throws OperationFailedException;
 
+    @ApiOperation(value = "Update CLaim", notes = "Update Claim")
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = "application/json", consumes = "application/json")
+    ResponseEntity<ClaimResponseDto> UpdateClaim(@Valid @RequestBody ClaimRequestDto request, @PathVariable Long id) throws ResourceNotFoundException, OperationFailedException;
+
 
     @ApiOperation(value = "Get Claim By Id", notes = "Get Claim By Id")
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = "application/json")
@@ -33,6 +38,11 @@ public interface ClaimApi {
     @ApiOperation(value = "Create Claim Item", notes = "Create Claim Item")
     @RequestMapping(value = "/request/item", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
     ResponseEntity<ClaimItemResponseDto> CreateClaimItem(@Valid @RequestBody ClaimItemRequestDto request) throws OperationFailedException, ResourceNotFoundException;
+
+
+    @ApiOperation(value = "Update CLaim Item", notes = "Update Claim Item")
+    @RequestMapping(value = "item/{id}", method = RequestMethod.PUT, produces = "application/json", consumes = "application/json")
+    ResponseEntity<ClaimItemResponseDto> UpdateClaimItem(@Valid @RequestBody ClaimItemUpdateDto request, @PathVariable Long id) throws ResourceNotFoundException, OperationFailedException;
 
     @ApiOperation(value = "Get Claims By User", notes = "Get Claims By User")
     @GetMapping(value = "user", produces = "application/json")

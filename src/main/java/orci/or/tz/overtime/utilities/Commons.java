@@ -8,6 +8,7 @@ import orci.or.tz.overtime.dto.department.DepartmentResponseDto;
 import orci.or.tz.overtime.dto.executive.ExecutiveResponseDto;
 import orci.or.tz.overtime.dto.section.SectionResponseDto;
 import orci.or.tz.overtime.dto.user.UserResponseDto;
+import orci.or.tz.overtime.enums.ClaimItemStatusEnum;
 import orci.or.tz.overtime.models.*;
 import orci.or.tz.overtime.services.DepartmentService;
 import orci.or.tz.overtime.services.SectionService;
@@ -149,6 +150,20 @@ public class Commons {
         }
 
         return resp;
+
+    }
+
+
+    public Boolean CheckItemsValidity(List<ClaimItem> items){
+        Boolean check = true;
+
+        for(ClaimItem i :items){
+            if(!i.getItemStatus().equals(ClaimItemStatusEnum.CREATED)){
+               check=false;
+            }
+        }
+
+        return  check;
 
     }
 }
